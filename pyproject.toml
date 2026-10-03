@@ -1,0 +1,35 @@
+[project]
+name = "dataviz-tips"
+version = "0.1.0"
+description = "Une collection des meilleures pratiques pour la visualisation de données"
+readme = "README.md"
+authors = [
+    { name = "Chris Nd", email = "50488760+chris-nd@users.noreply.github.com" }
+]
+requires-python = ">=3.11"
+dependencies = [
+    "matplotlib>=3.11.2",
+    "numpy>=2.4.6",
+    "pandas>=3.0.6",
+    "seaborn>=0.13.2",
+]
+
+[project.scripts]
+dataviz-tips = "dataviz_tips:main"
+
+[build-system]
+requires = ["uv_build>=0.12.10,<0.13.0"]
+build-backend = "uv_build"
+
+[dependency-groups]
+dev = [
+    "commitizen>=4.19.1",
+    "ruff>=0.16.10",
+]
+
+[tool.commitizen]
+name = "cz_conventional_commits"
+tag_format = "v$version"
+version_scheme = "pep440"
+version_provider = "uv"
+update_changelog_on_bump = true
