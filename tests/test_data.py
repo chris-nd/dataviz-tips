@@ -84,8 +84,8 @@ def test_keeps_frame_without_duplicates(df):
     pd.testing.assert_frame_equal(result, df)
 
 
-def test_all_identical_rows(df, expected):
-    "Vérifie que tous les lignes identiques sont supprimées sauf la première"
+def test_all_identical_rows():
+    "Vérifie que toutes les lignes identiques sont supprimées sauf la première"
     df = pd.DataFrame({"a": [1, 1, 1], "b": ["x", "x", "x"]})
     expected = pd.DataFrame({"a": [1], "b": ["x"]})
 
@@ -95,7 +95,7 @@ def test_all_identical_rows(df, expected):
 
 
 def test_empty_df():
-    "Vérifie que un DataFrame vide est géré correctement"
+    "Vérifie qu'un DataFrame vide est géré correctement"
     df = pd.DataFrame(columns=["a", "b"])
 
     result = drop_duplicate_rows(df)
