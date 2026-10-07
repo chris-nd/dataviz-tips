@@ -4,7 +4,7 @@ import numpy as np
 import pandas as pd
 import pytest
 
-from dataviz_tips.stats import iqr_bounds
+from dataviz_tips.stats import iqr_bounds, split_extremes
 
 
 @pytest.fixture(name="series")
@@ -98,3 +98,78 @@ def test_does_not_mutate_input():
     iqr_bounds(series)
 
     pd.testing.assert_series_equal(series, original_series)
+
+
+@pytest.fixture(name="df")
+def fixture_df():
+    "Crée un DataFrame de test."
+    return pd.DataFrame({"x": [1, 2, 3, 4, 100], "y": list("abcde")})
+
+
+def test_splits_extreme_rows(df):
+    "Teste la séparation des lignes extrêmes."
+    extremes, rest = split_extremes(df, "x")
+
+    pd.testing.assert_frame_equal(extremes, df.iloc[[4]])
+    pd.testing.assert_frame_equal(rest, df.iloc[[0, 1, 2, 3]])
+
+
+def test_keeps_all_rows(df):
+    "Teste que toutes les lignes sont conservées."
+    extremes, rest = split_extremes(df, "x")
+
+    assert len(extremes) + len(rest) == len(df)
+    pd.testing.assert_frame_equal(pd.concat([extremes, rest]).sort_index(), df)
+
+
+@pytest.mark.parametrize("values", [[1, 2, 3, 4, 7], [-1, 2, 3, 4, 5]])
+def test_value_on_bound_is_not_extreme(values):
+    "Teste que les valeurs sur les bornes ne sont pas considérées comme extrêmes."
+    df = pd.DataFrame({"x": values})
+
+    extremes, rest = split_extremes(df, "x")
+
+    assert extremes.empty
+    pd.testing.assert_frame_equal(rest, df)
+
+
+def test_nan_goes_to_rest():
+    "Teste que les valeurs NaN vont dans le reste."
+    df = pd.DataFrame({"x": [1, 2, 3, 4, 100, np.nan]})
+
+    extremes, rest = split_extremes(df, "x")
+
+    pd.testing.assert_frame_equal(extremes, df.iloc[[4]])
+    pd.testing.assert_frame_equal(rest, df.iloc[[0, 1, 2, 3, 5]])
+
+
+def test_no_extreme_returns_empty_frame_with_columns():
+    "Teste qu'aucune ligne n'est considérée comme extrême."
+    df = pd.DataFrame({"x": [1, 2, 3, 4, 5], "y": list("abcde")})
+
+    extremes, rest = split_extremes(df, "x")
+
+    pd.testing.assert_frame_equal(extremes, df.iloc[0:0])
+    pd.testing.assert_frame_equal(rest, df)
+
+
+def test_does_not_df_mutate_input():
+    "Teste que le DataFrame d'entrée n'est pas modifié."
+    df = pd.DataFrame({"x": [1, 2, 3, 4, 100, np.nan]})
+    original = df.copy()
+
+    split_extremes(df, "x")
+
+    pd.testing.assert_frame_equal(df, original)
+
+
+def test_unknown_column_raises_key_error(df):
+    "Teste que la levée d'une erreur est attendue pour une colonne inconnue."
+    with pytest.raises(KeyError):
+        split_extremes(df, "missing")
+
+
+def test_negative_k_raises_value_error(df):
+    "Teste que la levée d'une erreur est attendue pour un paramètre k négatif."
+    with pytest.raises(ValueError, match="négatif"):
+        split_extremes(df, "x", k=-1)
