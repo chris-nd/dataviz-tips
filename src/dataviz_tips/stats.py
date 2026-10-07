@@ -8,6 +8,25 @@ import numpy as np
 import pandas as pd
 
 
+def split_extremes(df: pd.DataFrame, column: str, k: float = 1.5) -> tuple[pd.DataFrame, pd.DataFrame]:
+    """
+    Sépare les lignes extrêmes des autres selon la règle de l'IQR.
+
+    Une valeur est extrême si elle est strictement hors de
+    [borne basse, borne haute]. Les NaN vont dans le reste.
+    L'index d'origine est conservé.
+
+    :raises KeyError: Si la colonne n'existe pas.
+    :raises ValueError: Si k est invalide ou la colonne sans valeur valide.
+    :returns: (extrêmes, reste)
+    """
+
+    lower, upper = iqr_bounds(df[column], k)
+    is_extreme = (df[column] < lower) | (df[column] > upper)
+
+    return df[is_extreme], df[~is_extreme]
+
+
 def iqr_bounds(series: pd.Series, k: float = 1.5) -> tuple[float, float]:
     """
     Calcule les bornes de l'écart interquartile pour une série donnée et ignore les valeurs NaN.
