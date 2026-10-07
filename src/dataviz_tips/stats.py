@@ -1,0 +1,42 @@
+"""
+Module de fonctions d'analyse statistiques.
+
+- Écart interquartile
+"""
+
+import numpy as np
+import pandas as pd
+
+
+def iqr_bounds(series: pd.Series, k: float = 1.5) -> tuple[float, float]:
+    """
+    Calcule les bornes de l'écart interquartile pour une série donnée et ignore les valeurs NaN.
+
+    :params series: La série de données.
+    :type series: pd.Series
+
+    :params k: Le multiplicateur pour déterminer les bornes.
+    :type k: float
+
+    :raises ValueError: Si la série ne contient aucune valeur valide ou si k est négatif.
+
+    :returns: Les bornes inférieure et supérieure de l'écart interquartile.
+    :rtype: tuple[float, float]
+    """
+
+    if series.isna().all():
+        raise ValueError("La série ne contient aucune valeur valide.")
+
+    if k < 0:
+        raise ValueError("Le paramètre k ne doit pas être un nombre négatif.")
+
+    if np.isnan(k):
+        raise ValueError("Le paramètre k ne doit pas être `NaN`.")
+
+    q1 = series.quantile(0.25)
+    q3 = series.quantile(0.75)
+    iqr = q3 - q1
+    lower_bound = float(q1 - k * iqr)
+    upper_bound = float(q3 + k * iqr)
+
+    return (lower_bound, upper_bound)
