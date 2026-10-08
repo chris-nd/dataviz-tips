@@ -2,13 +2,16 @@
 Module de fonctions d'analyse statistiques.
 
 - Écart interquartile
+- Séparation des valeurs extrêmes
 """
 
 import numpy as np
 import pandas as pd
 
 
-def split_extremes(df: pd.DataFrame, column: str, k: float = 1.5) -> tuple[pd.DataFrame, pd.DataFrame]:
+def split_extremes(
+    df: pd.DataFrame, column: str, k: float = 1.5
+) -> tuple[pd.DataFrame, pd.DataFrame]:
     """
     Sépare les lignes extrêmes des autres selon la règle de l'IQR.
 
