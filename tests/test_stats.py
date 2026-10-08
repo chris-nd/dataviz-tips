@@ -7,6 +7,9 @@ import pytest
 from dataviz_tips.stats import iqr_bounds, split_extremes
 
 
+# Test iqr_bounds()
+
+
 @pytest.fixture(name="series")
 def fixture_series():
     "Crée une série de données pour les tests."
@@ -100,6 +103,9 @@ def test_does_not_mutate_input():
     pd.testing.assert_series_equal(series, original_series)
 
 
+# Tests split_extremes()
+
+
 @pytest.fixture(name="df")
 def fixture_df():
     "Crée un DataFrame de test."
@@ -158,7 +164,7 @@ def test_does_not_df_mutate_input():
     df = pd.DataFrame({"x": [1, 2, 3, 4, 100, np.nan]})
     original = df.copy()
 
-    split_extremes(df, "x")
+    _ = split_extremes(df, "x")
 
     pd.testing.assert_frame_equal(df, original)
 
