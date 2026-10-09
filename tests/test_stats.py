@@ -4,8 +4,7 @@ import numpy as np
 import pandas as pd
 import pytest
 
-from dataviz_tips.stats import iqr_bounds, split_extremes
-
+from dataviz_tips.stats import correlation_matrix, iqr_bounds, split_extremes
 
 # Test iqr_bounds()
 
@@ -159,7 +158,7 @@ def test_no_extreme_returns_empty_frame_with_columns():
     pd.testing.assert_frame_equal(rest, df)
 
 
-def test_does_not_df_mutate_input():
+def test_split_extremes_does_not_mutate_input():
     "Teste que le DataFrame d'entrée n'est pas modifié."
     df = pd.DataFrame({"x": [1, 2, 3, 4, 100, np.nan]})
     original = df.copy()
@@ -179,3 +178,34 @@ def test_negative_k_raises_value_error(df):
     "Teste que la levée d'une erreur est attendue pour un paramètre k négatif."
     with pytest.raises(ValueError, match="négatif"):
         split_extremes(df, "x", k=-1)
+
+
+# Matrice de corrélation
+def test_correlation_matrix_values():
+    df = pd.DataFrame({"a": [1, 2, 3], "b": [2, 4, 6], "c": [3, 2, 1]})
+    expected = pd.DataFrame(
+        [[1, 1, -1], [1, 1, -1], [-1, -1, 1]],
+        index=list("abc"),
+        columns=list("abc"),
+        dtype=float,
+    )
+
+    pd.testing.assert_frame_equal(correlation_matrix(df), expected)
+
+
+def test_correlation_matrix_ignores_text_columns():
+    df = pd.DataFrame({"a": [1, 2, 3], "b": [3, 2, 1], "t": list("xyz")})
+
+    assert list(correlation_matrix(df).columns) == ["a", "b"]
+
+
+@pytest.mark.parametrize(
+    "df",
+    [
+        pd.DataFrame({"a": [1, 2], "t": list("xy")}),  # une seule colonne numérique
+        pd.DataFrame({"t": list("xy")}),  # aucune
+    ],
+)
+def test_correlation_matrix_needs_two_numeric_columns(df):
+    with pytest.raises(ValueError, match="deux colonnes numériques"):
+        correlation_matrix(df)

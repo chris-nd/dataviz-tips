@@ -3,10 +3,27 @@ Module de fonctions d'analyse statistiques.
 
 - Écart interquartile
 - Séparation des valeurs extrêmes
+- Matrice de corrélation
 """
 
 import numpy as np
 import pandas as pd
+
+
+def correlation_matrix(df: pd.DataFrame) -> pd.DataFrame:
+    """
+    Matrice de corrélation (Pearson) des colonnes numériques.
+
+    :param df: DataFrame contenant les données
+    :type df: pd.DataFrame
+    :raises ValueError: S'il y a moins de deux colonnes numériques.
+    :return: Matrice de corrélation
+    :rtype: pd.DataFrame
+    """
+    corr = df.corr(numeric_only=True)
+    if corr.shape[0] < 2:
+        raise ValueError("Au moins deux colonnes numériques sont nécessaires.")
+    return corr
 
 
 def split_extremes(
