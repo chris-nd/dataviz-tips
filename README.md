@@ -18,8 +18,8 @@ notebooks l'appellent sans y dupliquer de logique.
 ## Installation
 
 ```bash
-git clone https://github.com/chris-nd/python-dataviz-basics.git
-cd python-dataviz-basics
+git clone https://github.com/chris-nd/dataviz-tips.git
+cd dataviz-tips
 uv sync
 ```
 

@@ -14,12 +14,12 @@ dependencies = [
     "seaborn>=0.13.2",
 ]
 
-[project.scripts]
-dataviz-tips = "dataviz_tips:main"
-
 [build-system]
 requires = ["uv_build>=0.12.10,<0.13.0"]
 build-backend = "uv_build"
+
+[tool.uv]
+default-groups = ["dev", "tests"]
 
 [dependency-groups]
 dev = [
