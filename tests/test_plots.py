@@ -194,7 +194,7 @@ def _artist(ax):
 def fixture_corr_matrix():  # écrite à la main : pas de df.corr() dans un test
     return pd.DataFrame(
         [[1, 0.5, -0.2], [0.5, 1, 0.3], [-0.2, 0.3, 1]],
-        index=list("ab"),
+        index=list("a"),
         columns=list("abc"),
     )
 
